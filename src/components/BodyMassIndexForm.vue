@@ -1,49 +1,49 @@
 <script setup>
-import { ref } from 'vue'
-import { useBMIStore } from './stores/BMIStores';
-import { storeToRefs } from 'pinia';
+import { ref } from 'vue' // import ref function from vue
+import { useBMIStore } from './stores/BMIStores'; // import useBMIStore function
+import { storeToRefs } from 'pinia'; // used when need to unwrap reactive references in a Pinia store
 
-const BMIStore = useBMIStore()
-const { userHeight } = storeToRefs(BMIStore)//userHeight defined in store
-
-// state - variables the app uses
-// this is moved to the store
-// const userHeight = ref(0)
-
-// state variables the app uses
-//const userHeight = ref(0)
-
-const emit = defineEmits('user-entered-data')
-
-
-
-
-const userHasSubmittedData = () => {
-  // function called when user clicks
-  // component needs to tell App.vue that the data is
-  // and send App.vue this data do it can do math
-  emit()('user-entered-data', userHeight.value)
-}
+const BMIStore = useBMIStore() // access the BMI store
 
 </script>
 
 <template>
+  <form @submit.prevent="calculateBMI"> <!--form element-ensure default form submission is prevented-instead call calculateBMI method when user submits form-->
   <!-- html here, things the user sees -->
    <!--can be updated from the scripts state-->
    <!--can tell the code the user has done something-->
 <h2>Enter your height and weight</h2>
 
-<lable>Height in meters</lable>
-<input v-model="userHeight">
+<!--Bind inputs directly in the store-->
+<!--bind height input to userHeight property in Pinia store-->
+<!--makes height value entered automatically update in store's userHeight-->
+<lable for="height">Height in meters:</lable>
+<input id="height" 
+ type="number" 
+ v-model="BMIStore.userHeight" 
+ placeholder="Enter height in meters"
+ />
 <br>
 
 <!-- todo use v model-->
- <label>Weight in kilograms</label>
-<br>
+ <!--bind weight input field to userWeight property in store-->
+ <label for="weight">Weight in kilograms:</label>
+ <input 
+  id="weight" 
+  type="number" 
+  v-model="BMIStore.userWeight" 
+  placeholder="Enter weight in kilograms"
+  />
+  <br>
+
+  <!--paragraph is shown if BMI is calculated(not null)-->
+  <!--the BMI is displayed after calculation by the stores calculateBMI computed property-->
+ <p v-if="BMIStore.calculatedBMI !== null">
+    Your BMI is: {{ calculatedBMI }}
+ </p>
+
 <!--could remove button - and add computed property from the store-->
 <!--store knows height and weight -->
-<button v-on:click="userHasSubmittedData">Calculate!</button>
-
-
-
+<button type="submit">Calculate!</button>
+</form>
 </template>
